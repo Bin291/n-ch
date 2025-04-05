@@ -64,7 +64,10 @@ const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
       <h2 className="text-lg font-medium mb-4">Input data</h2>
       
       <div className="mb-4">
-        <DataBarChart data={data} highlightIndex={highlightIndex} />
+        <DataBarChart 
+          data={data} 
+          highlightIndices={highlightIndex !== undefined ? [highlightIndex] : []} 
+        />
       </div>
       
       <div className="space-y-2">
