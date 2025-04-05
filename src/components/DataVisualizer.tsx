@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -140,7 +139,7 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
   return (
     <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 flex flex-col">
       {/* Visualization Area */}
-      <div className="flex-grow flex items-end justify-center mt-4 space-x-2 min-h-[200px] pb-6 relative">
+      <div className="flex-grow flex items-end justify-center mt-4 space-x-1 min-h-[200px] pb-6 relative">
         {currentArray.map((value, index) => (
           <div
             key={index}
@@ -154,7 +153,7 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
                 maxWidth: '40px'
               }}
             ></div>
-            <span className="absolute bottom-[-20px] text-xs">{value}</span>
+            <span className="absolute bottom-[-20px] text-xs text-gray-700">{value}</span>
           </div>
         ))}
       </div>
@@ -163,11 +162,11 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
       <div className="mt-10 border-t pt-4">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-medium">Speed</div>
-          <div className="flex items-center space-x-2">
-            <span className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500'}`}>x1</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500'}`}>x2</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500'}`}>x5</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500'}`}>x10</span>
+          <div className="flex items-center gap-1">
+            <span className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x1</span>
+            <span className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x2</span>
+            <span className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x5</span>
+            <span className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x10</span>
           </div>
         </div>
         
@@ -186,14 +185,14 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10"
+            className="h-10 w-10 rounded-full"
             onClick={handleRestart}
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
           
           <Button
-            className="px-8"
+            className="px-10 bg-gray-900 hover:bg-gray-800"
             onClick={handlePlayPause}
           >
             {isRunning ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
@@ -203,7 +202,7 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
           <Button
             variant="outline"
             size="icon"
-            className="h-10 w-10"
+            className="h-10 w-10 rounded-full"
             onClick={handleNextStep}
             disabled={isRunning || currentStep >= sortingSteps.length - 1}
           >

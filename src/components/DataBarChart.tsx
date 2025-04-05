@@ -33,13 +33,19 @@ const DataBarChart: React.FC<DataBarChartProps> = ({ data, highlightIndex }) => 
   };
 
   return (
-    <div className="w-full h-64 bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+    <div className="w-full h-64">
       <ChartContainer config={config}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="index" hide />
-            <YAxis domain={[0, maxValue]} hide />
+          <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
+            <XAxis 
+              dataKey="value" 
+              axisLine={false} 
+              tickLine={false}
+              tick={{ fill: '#333', fontSize: 12 }}
+              dy={10}
+            />
+            <YAxis hide domain={[0, maxValue]} />
             <ChartTooltip
               content={<ChartTooltipContent />}
             />
