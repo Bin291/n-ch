@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, Plus, Shuffle } from 'lucide-react';
 import { toast } from 'sonner';
+import DataBarChart from './DataBarChart';
 
 interface InputDataProps {
   data: number[];
@@ -12,6 +13,7 @@ interface InputDataProps {
 
 const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
   const [newValue, setNewValue] = useState<string>('');
+  const [highlightIndex, setHighlightIndex] = useState<number | undefined>(undefined);
 
   const handleAddValue = () => {
     if (newValue.trim() === '') {
@@ -25,8 +27,13 @@ const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
       return;
     }
 
-    setData([...data, numValue]);
+    const newData = [...data, numValue];
+    setData(newData);
     setNewValue('');
+    
+    // Highlight the newly added bar
+    setHighlightIndex(newData.length - 1);
+    setTimeout(() => setHighlightIndex(undefined), 2000);
   };
 
   const handleRemoveValue = (index: number) => {
@@ -55,6 +62,10 @@ const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
   return (
     <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
       <h2 className="text-lg font-medium mb-4">Input data</h2>
+      
+      <div className="mb-4">
+        <DataBarChart data={data} highlightIndex={highlightIndex} />
+      </div>
       
       <div className="space-y-2">
         {data.map((value, index) => (
@@ -118,7 +129,11 @@ const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
       </div>
       
       <div className="mt-4">
-        <Button className="w-full" disabled={data.length === 0} onClick={() => {}}>
+        <Button 
+          className="w-full" 
+          disabled={data.length === 0}
+          onClick={() => toast.success('Data submitted!')}
+        >
           Submit
         </Button>
       </div>
