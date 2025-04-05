@@ -160,25 +160,25 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
           <div className="text-sm font-medium">Speed</div>
           <div className="flex items-center gap-1">
             <span 
-              className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'} cursor-pointer`}
               onClick={() => setSpeed(1)}
             >
               x1
             </span>
             <span 
-              className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'} cursor-pointer`}
               onClick={() => setSpeed(2)}
             >
               x2
             </span>
             <span 
-              className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'} cursor-pointer`}
               onClick={() => setSpeed(5)}
             >
               x5
             </span>
             <span 
-              className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'} cursor-pointer`}
               onClick={() => setSpeed(10)}
             >
               x10
@@ -186,16 +186,17 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
           </div>
         </div>
         
-        <Slider
-          value={[speed]}
-          min={1}
-          max={10}
-          step={1}
-          className="mb-6"
-          onValueChange={([value]) => {
-            setSpeed(value);
-          }}
-        />
+        <div className="mb-6">
+          <Slider
+            value={[speed]}
+            min={1}
+            max={10}
+            step={1}
+            onValueChange={([value]) => {
+              setSpeed(value);
+            }}
+          />
+        </div>
         
         <div className="flex justify-between items-center">
           <Button

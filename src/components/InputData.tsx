@@ -67,6 +67,7 @@ const InputData: React.FC<InputDataProps> = ({ data, setData }) => {
         <DataBarChart 
           data={data} 
           highlightIndices={highlightIndex !== undefined ? [highlightIndex] : []} 
+          barColor="#9b87f5"
         />
       </div>
       
