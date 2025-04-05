@@ -9,23 +9,27 @@ import {
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
 import { SortingAlgorithm } from '@/utils/sortingAlgorithms';
-import { BarChart2 } from 'lucide-react';
+import { BarChart2, ArrowUpDown } from 'lucide-react';
 
 interface AlgorithmSelectorProps {
   algorithms: SortingAlgorithm[];
   selectedAlgorithm: SortingAlgorithm;
   onSelectAlgorithm: (algorithm: SortingAlgorithm) => void;
+  comparisonMode: 'single' | 'dual' | 'all';
+  setComparisonMode: (mode: 'single' | 'dual' | 'all') => void;
 }
 
 const AlgorithmSelector: React.FC<AlgorithmSelectorProps> = ({
   algorithms,
   selectedAlgorithm,
-  onSelectAlgorithm
+  onSelectAlgorithm,
+  comparisonMode,
+  setComparisonMode
 }) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center">
-        <BarChart2 className="mr-2 text-blue-500" />
+        <ArrowUpDown className="mr-2 text-blue-500" />
         <h1 className="text-xl font-semibold">Sort Lab</h1>
       </div>
       
@@ -49,11 +53,21 @@ const AlgorithmSelector: React.FC<AlgorithmSelectorProps> = ({
           </SelectContent>
         </Select>
         
-        <Button variant="outline">
+        <Button 
+          variant={comparisonMode === 'dual' ? "default" : "outline"} 
+          onClick={() => setComparisonMode('dual')}
+          className="flex items-center gap-2"
+        >
+          <BarChart2 className="h-4 w-4" />
           Compare 2
         </Button>
         
-        <Button variant="outline">
+        <Button 
+          variant={comparisonMode === 'all' ? "default" : "outline"}
+          onClick={() => setComparisonMode('all')}
+          className="flex items-center gap-2"
+        >
+          <BarChart2 className="h-4 w-4" />
           Compare All
         </Button>
       </div>

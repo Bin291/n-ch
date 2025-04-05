@@ -1,4 +1,3 @@
-
 export interface SortStep {
   array: number[];
   comparing: [number, number] | null;
@@ -478,10 +477,209 @@ export const mergeSort: SortingAlgorithm = {
   }
 };
 
+// Add shell sort implementation
+export const shellSort: SortingAlgorithm = {
+  name: "Shell Sort",
+  description: [
+    "An extension of insertion sort that allows the exchange of items that are far apart",
+    "The algorithm starts by sorting pairs of elements far apart from each other",
+    "As the algorithm progresses, the gap between elements is reduced"
+  ],
+  execute: (inputArray: number[]): SortStep[] => {
+    const steps: SortStep[] = [];
+    const array = [...inputArray];
+    const n = array.length;
+    let sorted: number[] = [];
+
+    // Start with a large gap and reduce it over time
+    for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
+      steps.push({
+        array: [...array],
+        comparing: null,
+        swapping: null,
+        sorted: [...sorted],
+        currentAction: `Setting gap size to ${gap}`
+      });
+      
+      // Do a gapped insertion sort
+      for (let i = gap; i < n; i++) {
+        // Add current element to gap sorted array
+        const temp = array[i];
+        
+        steps.push({
+          array: [...array],
+          comparing: [i, i - gap],
+          swapping: null,
+          sorted: [...sorted],
+          currentAction: `Comparing elements at positions ${i} and ${i - gap}`
+        });
+        
+        // Shift earlier gap-sorted elements up until the correct location for array[i] is found
+        let j;
+        for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
+          steps.push({
+            array: [...array],
+            comparing: null,
+            swapping: [j, j - gap],
+            sorted: [...sorted],
+            currentAction: `Moving larger element ${array[j - gap]} up by gap ${gap}`
+          });
+          
+          array[j] = array[j - gap];
+          
+          steps.push({
+            array: [...array],
+            comparing: null,
+            swapping: null,
+            sorted: [...sorted],
+            currentAction: `Shifted element by gap ${gap}`
+          });
+        }
+        
+        // Put temp in its correct location
+        array[j] = temp;
+        
+        steps.push({
+          array: [...array],
+          comparing: null,
+          swapping: null,
+          sorted: [...sorted],
+          currentAction: `Placed element ${temp} in its correct position within the gap sequence`
+        });
+      }
+    }
+    
+    // Mark all elements as sorted
+    sorted = Array.from({ length: n }, (_, i) => i);
+    
+    steps.push({
+      array: [...array],
+      comparing: null,
+      swapping: null,
+      sorted: [...sorted],
+      currentAction: `Sorting complete`
+    });
+    
+    return steps;
+  }
+};
+
+// Add radix sort implementation
+export const radixSort: SortingAlgorithm = {
+  name: "Radix Sort",
+  description: [
+    "A non-comparative sorting algorithm that sorts data by processing individual digits",
+    "Starting from the least significant digit to the most significant digit",
+    "Numbers are distributed into buckets according to their digits"
+  ],
+  execute: (inputArray: number[]): SortStep[] => {
+    const steps: SortStep[] = [];
+    const array = [...inputArray];
+    const n = array.length;
+    let sorted: number[] = [];
+    
+    // Find the maximum number to know the number of digits
+    const max = Math.max(...array);
+    
+    // Do counting sort for every digit
+    for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+      steps.push({
+        array: [...array],
+        comparing: null,
+        swapping: null,
+        sorted: [...sorted],
+        currentAction: `Processing digits at position 10^${Math.log10(exp)}`
+      });
+      
+      // Create output array and count array
+      const output = new Array(n).fill(0);
+      const count = new Array(10).fill(0);
+      
+      // Store count of occurrences in count[]
+      for (let i = 0; i < n; i++) {
+        const digit = Math.floor(array[i] / exp) % 10;
+        count[digit]++;
+        
+        steps.push({
+          array: [...array],
+          comparing: [i, i],
+          swapping: null,
+          sorted: [...sorted],
+          currentAction: `Counting digit ${digit} from number ${array[i]}`
+        });
+      }
+      
+      // Change count[i] so that it contains actual position of this digit in output[]
+      for (let i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+        
+        steps.push({
+          array: [...array],
+          comparing: null,
+          swapping: null,
+          sorted: [...sorted],
+          currentAction: `Calculating position for digit ${i}`
+        });
+      }
+      
+      // Build the output array
+      for (let i = n - 1; i >= 0; i--) {
+        const digit = Math.floor(array[i] / exp) % 10;
+        output[count[digit] - 1] = array[i];
+        count[digit]--;
+        
+        steps.push({
+          array: [...array],
+          comparing: [i, count[digit]],
+          swapping: [i, count[digit]],
+          sorted: [...sorted],
+          currentAction: `Placing ${array[i]} in its sorted position for this digit`
+        });
+      }
+      
+      // Copy the output array to array[], so that array[] contains sorted numbers according to current digit
+      for (let i = 0; i < n; i++) {
+        steps.push({
+          array: [...array],
+          comparing: null,
+          swapping: [i, i],
+          sorted: [...sorted],
+          currentAction: `Updating array with sorted values for this digit`
+        });
+        
+        array[i] = output[i];
+      }
+      
+      steps.push({
+        array: [...array],
+        comparing: null,
+        swapping: null,
+        sorted: [...sorted],
+        currentAction: `Finished sorting by digit at position 10^${Math.log10(exp)}`
+      });
+    }
+    
+    // Mark all elements as sorted
+    sorted = Array.from({ length: n }, (_, i) => i);
+    
+    steps.push({
+      array: [...array],
+      comparing: null,
+      swapping: null,
+      sorted: [...sorted],
+      currentAction: `Sorting complete`
+    });
+    
+    return steps;
+  }
+};
+
 export const algorithms: SortingAlgorithm[] = [
   bubbleSort,
   selectionSort,
   insertionSort,
   quickSort,
-  mergeSort
+  mergeSort,
+  shellSort,
+  radixSort
 ];

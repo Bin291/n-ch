@@ -1,34 +1,41 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Play, Pause, RotateCcw, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { SortStep } from '@/utils/sortingAlgorithms';
+import DataBarChart from './DataBarChart';
+import AlgorithmComparison from './AlgorithmComparison';
 
 interface DataVisualizerProps {
   data: number[];
   sortingSteps: SortStep[];
+  allSortingSteps?: Record<string, SortStep[]>;
   isRunning: boolean;
   setIsRunning: React.Dispatch<React.SetStateAction<boolean>>;
   resetVisualization: () => void;
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  comparisonMode: 'single' | 'dual' | 'all';
+  algorithms: any[];
 }
 
 const DataVisualizer: React.FC<DataVisualizerProps> = ({
   data,
   sortingSteps,
+  allSortingSteps = {},
   isRunning,
   setIsRunning,
   resetVisualization,
   currentStep,
-  setCurrentStep
+  setCurrentStep,
+  comparisonMode,
+  algorithms
 }) => {
   const [speed, setSpeed] = useState<number>(1);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  
-  const maxValue = Math.max(...data, 1) * 1.2; // Adding 20% to ensure bars fit
-  
+
   // Set up animation interval
   useEffect(() => {
     if (isRunning) {
@@ -85,10 +92,6 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
     ? sortingSteps[currentStep].swapping
     : null;
   
-  const sorted = sortingSteps.length > 0 && currentStep < sortingSteps.length
-    ? sortingSteps[currentStep].sorted
-    : [];
-  
   // Play/Pause button handler
   const handlePlayPause = () => {
     if (currentStep >= sortingSteps.length - 1) {
@@ -113,60 +116,73 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
     }
   };
   
-  // Get the bar color based on its state
-  const getBarColor = (index: number) => {
-    // Green if it's sorted
-    if (sorted.includes(index)) {
-      return 'bg-green-500';
-    }
-    // Red if it's being swapped
-    if (swapping && (swapping.includes(index))) {
-      return 'bg-red-500';
-    }
-    // Yellow if it's being compared
-    if (comparing && comparing.includes(index)) {
-      return 'bg-yellow-400';
-    }
-    // Default color
-    return 'bg-sortBar';
-  };
-  
-  // Get animation class for bars
-  const getBarAnimation = (index: number) => {
-    return swapping && swapping.includes(index) ? 'animate-swap' : '';
-  };
-  
-  return (
-    <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 flex flex-col">
-      {/* Visualization Area */}
-      <div className="flex-grow flex items-end justify-center mt-4 space-x-1 min-h-[200px] pb-6 relative">
-        {currentArray.map((value, index) => (
-          <div
-            key={index}
-            className="relative flex flex-col items-center"
-            style={{ height: '100%', width: `${100 / Math.max(currentArray.length, 1)}%` }}
-          >
-            <div
-              className={`${getBarColor(index)} ${getBarAnimation(index)} w-full transition-all duration-200 rounded-t-md`}
-              style={{ 
-                height: `${(value / maxValue) * 100}%`,
-                maxWidth: '40px'
-              }}
-            ></div>
-            <span className="absolute bottom-[-20px] text-xs text-gray-700">{value}</span>
+  // Render based on comparison mode
+  const renderVisualization = () => {
+    if (comparisonMode === 'single') {
+      return (
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 flex flex-col">
+          <div className="flex-grow flex items-end justify-center mt-4 space-x-1 min-h-[200px] pb-6 relative">
+            <DataBarChart 
+              data={currentArray}
+              highlightIndices={[
+                ...(comparing ? comparing : []),
+                ...(swapping ? swapping : [])
+              ]}
+            />
           </div>
-        ))}
-      </div>
-      
-      {/* Controls Area */}
+          
+          {renderControls()}
+        </div>
+      );
+    } else {
+      return (
+        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 flex flex-col">
+          <AlgorithmComparison 
+            algorithms={algorithms}
+            data={data}
+            sortingSteps={allSortingSteps}
+            currentStep={currentStep}
+            isRunning={isRunning}
+            mode={comparisonMode === 'dual' ? 'dual' : 'all'}
+          />
+          
+          {renderControls()}
+        </div>
+      );
+    }
+  };
+
+  // Controls section
+  const renderControls = () => {
+    return (
       <div className="mt-10 border-t pt-4">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-medium">Speed</div>
           <div className="flex items-center gap-1">
-            <span className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x1</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x2</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x5</span>
-            <span className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}>x10</span>
+            <span 
+              className={`px-2 py-1 rounded text-xs ${speed === 1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              onClick={() => setSpeed(1)}
+            >
+              x1
+            </span>
+            <span 
+              className={`px-2 py-1 rounded text-xs ${speed === 2 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              onClick={() => setSpeed(2)}
+            >
+              x2
+            </span>
+            <span 
+              className={`px-2 py-1 rounded text-xs ${speed === 5 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              onClick={() => setSpeed(5)}
+            >
+              x5
+            </span>
+            <span 
+              className={`px-2 py-1 rounded text-xs ${speed === 10 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-500'}`}
+              onClick={() => setSpeed(10)}
+            >
+              x10
+            </span>
           </div>
         </div>
         
@@ -192,7 +208,7 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
           </Button>
           
           <Button
-            className="px-10 bg-gray-900 hover:bg-gray-800"
+            className="px-10 bg-blue-500 hover:bg-blue-600"
             onClick={handlePlayPause}
           >
             {isRunning ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
@@ -211,11 +227,13 @@ const DataVisualizer: React.FC<DataVisualizerProps> = ({
         </div>
         
         <div className="text-right text-sm text-gray-500 mt-2">
-          {currentStep}/{sortingSteps.length - 1}
+          {currentStep}/{sortingSteps.length > 0 ? sortingSteps.length - 1 : 0}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  return renderVisualization();
 };
 
 export default DataVisualizer;

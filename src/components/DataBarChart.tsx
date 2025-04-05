@@ -7,33 +7,45 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ReferenceLine
+  Tooltip
 } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
 
 interface DataBarChartProps {
   data: number[];
-  highlightIndex?: number;
+  highlightIndices?: number[];
+  highlightColors?: {
+    comparing?: string;
+    swapping?: string;
+  };
 }
 
-const DataBarChart: React.FC<DataBarChartProps> = ({ data, highlightIndex }) => {
+const DataBarChart: React.FC<DataBarChartProps> = ({ 
+  data, 
+  highlightIndices = [], 
+  highlightColors = { comparing: "#9b87f5", swapping: "#ea384c" } 
+}) => {
   // Transform data into the format expected by recharts
-  const chartData = data.map((value, index) => ({
-    index: index,
-    value: value,
-    highlight: index === highlightIndex
-  }));
+  const chartData = data.map((value, index) => {
+    const isComparing = highlightIndices && highlightIndices.includes(index);
+    
+    return {
+      index: index,
+      value: value,
+      highlight: isComparing,
+      fillColor: isComparing ? highlightColors.swapping : highlightColors.comparing
+    };
+  });
 
   const maxValue = Math.max(...data, 1) * 1.2; // Adding 20% to ensure bars fit
 
   const config = {
-    regular: { color: "#9b87f5" },
-    highlight: { color: "#ea384c" },
+    regular: { color: highlightColors.comparing },
+    highlight: { color: highlightColors.swapping },
   };
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-48">
       <ChartContainer config={config}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
@@ -52,22 +64,11 @@ const DataBarChart: React.FC<DataBarChartProps> = ({ data, highlightIndex }) => 
             <Bar 
               dataKey="value" 
               radius={[5, 5, 0, 0]} 
-              fill="#9b87f5"
+              fill={highlightColors.comparing}
               fillOpacity={0.85} 
               strokeWidth={0}
               name="Value"
             />
-            {highlightIndex !== undefined && (
-              <ReferenceLine 
-                x={highlightIndex} 
-                stroke="#ea384c"
-                strokeWidth={2}
-              >
-                <svg x="-6" y="0" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M6 0L11.1962 12H0.803848L6 0Z" fill="#ea384c" />
-                </svg>
-              </ReferenceLine>
-            )}
           </BarChart>
         </ResponsiveContainer>
       </ChartContainer>
