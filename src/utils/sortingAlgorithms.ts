@@ -390,7 +390,8 @@ export const mergeSort: SortingAlgorithm = {
         steps.push({
           array: [...fullArray],
           comparing: null,
-          swapping: [k],
+          // Fix: Changed from [k] to [k, k] to match the expected type
+          swapping: [k, k],
           sorted: [...sorted],
           currentAction: `Placing element in the correct position of the merged array`
         });
@@ -406,7 +407,8 @@ export const mergeSort: SortingAlgorithm = {
         steps.push({
           array: [...fullArray],
           comparing: null,
-          swapping: [k],
+          // Fix: Changed from [k] to [k, k] to match the expected type
+          swapping: [k, k],
           sorted: [...sorted],
           currentAction: `Copying remaining elements from left subarray`
         });
@@ -423,7 +425,8 @@ export const mergeSort: SortingAlgorithm = {
         steps.push({
           array: [...fullArray],
           comparing: null,
-          swapping: [k],
+          // Fix: Changed from [k] to [k, k] to match the expected type
+          swapping: [k, k],
           sorted: [...sorted],
           currentAction: `Copying remaining elements from right subarray`
         });
